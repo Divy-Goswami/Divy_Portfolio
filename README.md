@@ -49,7 +49,7 @@ npm install
    
    b. Enable Firestore Database in your Firebase project
    
-   c. Create a `.env` file in the root directory:
+   c. Create a `.env` file in the root directory with your Firebase credentials:
    ```env
    VITE_FIREBASE_API_KEY=your-api-key-here
    VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
@@ -60,6 +60,12 @@ npm install
    ```
    
    d. Get your Firebase config from Project Settings > General > Your apps > Web app config
+   
+   e. **Initialize the database** (run this once after setting up Firebase):
+   ```bash
+   npm run init-db
+   ```
+   This will create the necessary Firestore collections (`contactSubmissions` and `portfolioData`).
 
 4. Start the development server:
 ```bash
@@ -70,9 +76,33 @@ npm run dev
 
 ## Firebase Setup
 
+### ✅ Firebase Credentials Configured
+
+Firebase credentials have been set up in the `.env` file. The application is ready to connect to your Firebase project.
+
+**Current Firebase Project:** `divy-portfolio-fdac5`
+
+### Initialize Database
+
+After setting up Firebase credentials, run the initialization script to create the database collections:
+
+```bash
+npm run init-db
+```
+
+This will:
+- Create the `contactSubmissions` collection for storing contact form data
+- Create the `portfolioData` collection for storing portfolio information
+- Set up the initial database structure
+
 ### Firestore Database Rules
 
-Make sure to set up proper Firestore security rules. For development, you can use:
+**⚠️ Important:** Before running `npm run init-db`, you need to configure Firestore security rules.
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Select your project: `divy-portfolio-fdac5`
+3. Navigate to **Firestore Database** > **Rules**
+4. Update the rules to allow read/write (for development):
 
 ```javascript
 rules_version = '2';
@@ -82,14 +112,16 @@ service cloud.firestore {
       allow read, write: if true; // Change this for production!
     }
     match /portfolioData/{document=**} {
-      allow read: if true;
-      allow write: if false; // Only allow reads for portfolio data
+      allow read, write: if true; // Change this for production!
     }
   }
 }
 ```
 
-**Important:** Update these rules for production to secure your database!
+5. Click **Publish** to save the rules
+6. Then run `npm run init-db` to initialize the database
+
+**Security Note:** The rules above allow public read/write access. For production, implement proper authentication and authorization rules to secure your database!
 
 ## Project Structure
 
@@ -123,6 +155,7 @@ service cloud.firestore {
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
+- `npm run init-db` - Initialize Firebase database collections (run once after setting up Firebase)
 
 ## Database Functions
 
